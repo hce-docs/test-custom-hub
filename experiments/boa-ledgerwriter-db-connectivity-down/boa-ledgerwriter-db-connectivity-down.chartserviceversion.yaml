@@ -1,0 +1,30 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChartServiceVersion
+metadata:
+  annotations:
+    categories: ""
+    chartDescription: ""
+    createdAt: ""
+    repository: ""
+    support: ""
+    vendor: ""
+  name: boa-ledgerwriter-db-connectivity-down
+packageInfo:
+  experiments: null
+  packageName: ""
+spec:
+  categoryDescription: ""
+  displayName: boa-ledgerwriter-db-connectivity-down
+  experiments: null
+  faults:
+  - description: ""
+    displayName: ""
+    name: pod-network-loss-x30
+    plan: null
+    supportedVersion: null
+  keywords:
+  - k8s
+  plan: null
+  provider:
+    name: ""
+  scenarios: null
