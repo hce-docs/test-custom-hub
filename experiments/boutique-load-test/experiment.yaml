@@ -96,7 +96,7 @@ spec:
                         - name: SPAWN_RATE
                           value: "100"
                         - name: HOST
-                          value: http://34.136.107.69/
+                          value: http://frontend
                         - name: LOAD_TYPE
                           value: load
                         - name: GRANT_TYPE
