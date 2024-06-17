@@ -1,0 +1,30 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChartServiceVersion
+metadata:
+  annotations:
+    categories: ""
+    chartDescription: ""
+    createdAt: ""
+    repository: ""
+    support: ""
+    vendor: ""
+  name: gcp-disk-loss
+packageInfo:
+  experiments: null
+  packageName: ""
+spec:
+  categoryDescription: ""
+  displayName: gcp-disk-loss
+  experiments: null
+  faults:
+  - description: ""
+    displayName: ""
+    name: gcp-vm-disk-loss-hr7
+    plan: null
+    supportedVersion: null
+  keywords:
+  - gcp
+  plan: null
+  provider:
+    name: ""
+  scenarios: null
