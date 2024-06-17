@@ -75,7 +75,7 @@ spec:
             spec:
               engineState: active
               appinfo:
-                appns: boutique
+                appns: team-3
                 applabel: app=cartservice
                 appkind: deployment
               chaosServiceAccount: litmus-admin

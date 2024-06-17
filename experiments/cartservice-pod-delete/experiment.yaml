@@ -73,7 +73,7 @@ spec:
               generateName: pod-delete-g9h
             spec:
               appinfo:
-                appns: boutique
+                appns: team-3
                 applabel: app=cartservice
                 appkind: deployment
               engineState: active
