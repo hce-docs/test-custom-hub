@@ -77,7 +77,7 @@ spec:
               terminationGracePeriodSeconds: 30
               auxiliaryAppInfo: ""
               appinfo:
-                appns: boutique
+                appns: team-2
                 applabel: app=frontend
                 appkind: deployment
               chaosServiceAccount: litmus-admin
