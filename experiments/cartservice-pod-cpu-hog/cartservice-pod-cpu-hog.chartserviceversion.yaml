@@ -1,0 +1,30 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChartServiceVersion
+metadata:
+  annotations:
+    categories: ""
+    chartDescription: ""
+    createdAt: ""
+    repository: ""
+    support: ""
+    vendor: ""
+  name: cartservice-pod-cpu-hog
+packageInfo:
+  experiments: null
+  packageName: ""
+spec:
+  categoryDescription: ""
+  displayName: cartservice-pod-cpu-hog
+  experiments: null
+  faults:
+  - description: ""
+    displayName: ""
+    name: pod-cpu-hog-8yv
+    plan: null
+    supportedVersion: null
+  keywords:
+  - boutique
+  plan: null
+  provider:
+    name: ""
+  scenarios: null
