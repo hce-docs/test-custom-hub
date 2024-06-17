@@ -1,0 +1,125 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  creationTimestamp: null
+  name: node-drain
+  namespace: hce
+spec:
+  arguments:
+    parameters:
+    - name: adminModeNamespace
+      value: hce
+  entrypoint: node-drain
+  nodeSelector:
+    cloud.google.com/gke-nodepool: chaos-pool
+  podGC:
+    strategy: OnWorkflowCompletion
+  securityContext:
+    runAsGroup: 0
+    runAsNonRoot: true
+    runAsUser: 1000
+  serviceAccountName: argo-chaos
+  templates:
+  - inputs: {}
+    metadata: {}
+    name: node-drain
+    outputs: {}
+    steps:
+    - - arguments: {}
+        name: node-drain-aso
+        template: node-drain-aso
+    - - arguments: {}
+        name: cleanup-chaos-resources
+        template: cleanup-chaos-resources
+  - container:
+      args:
+      - kubectl delete chaosengine -l workflow_run_id={{workflow.uid}} -n {{workflow.parameters.adminModeNamespace}}
+      command:
+      - sh
+      - -c
+      image: docker.io/harness/chaos-go-runner:1.38.0
+      name: ""
+      resources: {}
+    inputs: {}
+    metadata: {}
+    name: cleanup-chaos-resources
+    outputs: {}
+  - container:
+      args:
+      - -file=/tmp/chaosengine-node-drain-aso.yaml
+      - -saveName=/tmp/engine-name
+      command:
+      - ./chaos-checker
+      image: docker.io/harness/chaos-go-runner:1.38.0
+      name: ""
+      resources: {}
+    inputs:
+      artifacts:
+      - name: node-drain-aso
+        path: /tmp/chaosengine-node-drain-aso.yaml
+        raw:
+          data: |
+            apiVersion: litmuschaos.io/v1alpha1
+            kind: ChaosEngine
+            metadata:
+              namespace: "{{workflow.parameters.adminModeNamespace}}"
+              labels:
+                name: node-drain
+                app.kubernetes.io/part-of: litmus
+                app.kubernetes.io/component: experiment-job
+                app.kubernetes.io/version: ci
+                workflow_run_id: "{{ workflow.uid }}"
+                workflow_name: node-drain
+              annotations:
+                probeRef: '[{"name":"system-probe","mode":"Edge"},{"name":"app-health-check","mode":"Continuous"},{"name":"cordon-node","mode":"SOT"}]'
+              generateName: node-drain-aso
+            spec:
+              engineState: active
+              terminationGracePeriodSeconds: 30
+              auxiliaryAppInfo: ""
+              chaosServiceAccount: litmus-admin
+              experiments:
+                - name: node-drain
+                  image: docker.io/harness/chaos-go-runner:1.38.1
+                  imagePullPolicy: Always
+                  args:
+                    - -c
+                    - ./experiments -name node-drain
+                  command:
+                    - /bin/bash
+                  spec:
+                    components:
+                      env:
+                        - name: TARGET_NODES
+                          value: gke-chaos-workshop-default-pool-3b564968-7frg
+                        - name: NODE_LABEL
+                          value: ""
+                        - name: TOTAL_CHAOS_DURATION
+                          value: "60"
+                        - name: DRAIN_TIMEOUT
+                          value: "60"
+                        - name: FORCE
+                          value: "true"
+                        - name: RAMP_TIME
+                          value: ""
+                        - name: DEFAULT_HEALTH_CHECK
+                          value: "false"
+                      securityContext:
+                        podSecurityContext:
+                          runAsUser: 2000
+                          runAsGroup: 0
+                      nodeSelector:
+                        cloud.google.com/gke-nodepool: chaos-pool
+              jobCleanUpPolicy: delete
+              components:
+                runner:
+                  nodeSelector:
+                    cloud.google.com/gke-nodepool: chaos-pool
+    metadata:
+      labels:
+        weight: "10"
+    name: node-drain-aso
+    outputs: {}
+status:
+  finishedAt: null
+  startedAt: null

@@ -1,0 +1,30 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChartServiceVersion
+metadata:
+  annotations:
+    categories: ""
+    chartDescription: ""
+    createdAt: ""
+    repository: ""
+    support: ""
+    vendor: ""
+  name: node-drain
+packageInfo:
+  experiments: null
+  packageName: ""
+spec:
+  categoryDescription: ""
+  displayName: node-drain
+  experiments: null
+  faults:
+  - description: ""
+    displayName: ""
+    name: node-drain-aso
+    plan: null
+    supportedVersion: null
+  keywords:
+  - k8s
+  plan: null
+  provider:
+    name: ""
+  scenarios: null
