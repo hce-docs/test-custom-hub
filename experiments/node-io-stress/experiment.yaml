@@ -1,0 +1,147 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  creationTimestamp: null
+  name: node-io-stress
+  namespace: hce
+spec:
+  arguments:
+    parameters:
+    - name: adminModeNamespace
+      value: hce
+  entrypoint: node-io-stress
+  podGC:
+    strategy: OnWorkflowCompletion
+  securityContext:
+    runAsGroup: 0
+    runAsNonRoot: true
+    runAsUser: 1000
+  serviceAccountName: argo-chaos
+  templates:
+  - inputs: {}
+    metadata: {}
+    name: node-io-stress
+    outputs: {}
+    steps:
+    - - arguments: {}
+        name: node-io-stress-0fg
+        template: node-io-stress-0fg
+    - - arguments: {}
+        name: cleanup-chaos-resources
+        template: cleanup-chaos-resources
+  - container:
+      args:
+      - kubectl delete chaosengine -l workflow_run_id={{workflow.uid}} -n {{workflow.parameters.adminModeNamespace}}
+      command:
+      - sh
+      - -c
+      image: docker.io/harness/chaos-go-runner:1.38.0
+      name: ""
+      resources: {}
+    inputs: {}
+    metadata: {}
+    name: cleanup-chaos-resources
+    outputs: {}
+  - container:
+      args:
+      - -file=/tmp/chaosengine-node-io-stress-0fg.yaml
+      - -saveName=/tmp/engine-name
+      command:
+      - ./chaos-checker
+      image: docker.io/harness/chaos-go-runner:1.38.0
+      name: ""
+      resources: {}
+    inputs:
+      artifacts:
+      - name: node-io-stress-0fg
+        path: /tmp/chaosengine-node-io-stress-0fg.yaml
+        raw:
+          data: |
+            apiVersion: litmuschaos.io/v1alpha1
+            kind: ChaosEngine
+            metadata:
+              namespace: "{{workflow.parameters.adminModeNamespace}}"
+              labels:
+                name: node-io-stress
+                app.kubernetes.io/part-of: litmus
+                app.kubernetes.io/component: experiment-job
+                app.kubernetes.io/version: ci
+                workflow_run_id: "{{ workflow.uid }}"
+                workflow_name: node-io-stress
+              annotations:
+                probeRef: '[{"name":"system-probe","mode":"Edge"},{"name":"app-health-check","mode":"Continuous"}]'
+              generateName: node-io-stress-0fg
+            spec:
+              engineState: active
+              terminationGracePeriodSeconds: 30
+              auxiliaryAppInfo: ""
+              chaosServiceAccount: litmus-admin
+              experiments:
+                - name: node-io-stress
+                  image: docker.io/harness/chaos-go-runner:1.38.1
+                  imagePullPolicy: Always
+                  args:
+                    - -c
+                    - ./experiments -name node-io-stress
+                  command:
+                    - /bin/bash
+                  spec:
+                    components:
+                      env:
+                        - name: TOTAL_CHAOS_DURATION
+                          value: "120"
+                        - name: FILESYSTEM_UTILIZATION_PERCENTAGE
+                          value: "90"
+                        - name: FILESYSTEM_UTILIZATION_BYTES
+                          value: ""
+                        - name: CPU
+                          value: "4"
+                        - name: NUMBER_OF_WORKERS
+                          value: "4"
+                        - name: VM_WORKERS
+                          value: "4"
+                        - name: TARGET_NODES
+                          value: ""
+                        - name: NODE_LABEL
+                          value: cloud.google.com/gke-nodepool=default-pool
+                        - name: RAMP_TIME
+                          value: ""
+                        - name: LIB_IMAGE
+                          value: docker.io/harness/chaos-go-runner:1.38.1
+                        - name: NODES_AFFECTED_PERC
+                          value: "100"
+                        - name: DEFAULT_HEALTH_CHECK
+                          value: "false"
+                        - name: SEQUENCE
+                          value: parallel
+                      securityContext:
+                        podSecurityContext:
+                          runAsUser: 2000
+                          runAsGroup: 0
+                    probe:
+                      - name: healthcheck
+                        type: cmdProbe
+                        mode: Edge
+                        runProperties:
+                          probeTimeout: 180s
+                          retry: 0
+                          interval: 1s
+                          stopOnFailure: false
+                        cmdProbe/inputs:
+                          command: ./healthcheck -name node-level
+                          source:
+                            image: docker.io/harness/chaos-go-runner:1.38.1
+                            inheritInputs: true
+                          comparator:
+                            type: string
+                            criteria: contains
+                            value: "[P000]"
+              jobCleanUpPolicy: delete
+    metadata:
+      labels:
+        weight: "10"
+    name: node-io-stress-0fg
+    outputs: {}
+status:
+  finishedAt: null
+  startedAt: null
