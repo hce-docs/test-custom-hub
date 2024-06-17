@@ -103,7 +103,7 @@ spec:
                         - name: NETWORK_PACKET_LOSS_PERCENTAGE
                           value: "100"
                         - name: TOTAL_CHAOS_DURATION
-                          value: "30"
+                          value: "90"
                         - name: RAMP_TIME
                           value: ""
                         - name: PODS_AFFECTED_PERC
