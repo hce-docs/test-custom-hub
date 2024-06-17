@@ -1,0 +1,128 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  creationTimestamp: null
+  name: k8s-node-restart
+  namespace: hce
+spec:
+  arguments:
+    parameters:
+    - name: adminModeNamespace
+      value: hce
+  entrypoint: k8s-node-down
+  nodeSelector:
+    cloud.google.com/gke-nodepool: chaos-pool
+  podGC:
+    strategy: OnWorkflowCompletion
+  securityContext:
+    runAsGroup: 0
+    runAsNonRoot: true
+    runAsUser: 1000
+  serviceAccountName: argo-chaos
+  templates:
+  - inputs: {}
+    metadata: {}
+    name: k8s-node-down
+    outputs: {}
+    steps:
+    - - arguments: {}
+        name: gcp-vm-instance-stop-aze
+        template: gcp-vm-instance-stop-aze
+    - - arguments: {}
+        name: cleanup-chaos-resources
+        template: cleanup-chaos-resources
+  - container:
+      args:
+      - kubectl delete chaosengine -l workflow_run_id={{workflow.uid}} -n {{workflow.parameters.adminModeNamespace}}
+      command:
+      - sh
+      - -c
+      image: docker.io/harness/chaos-go-runner:1.38.0
+      name: ""
+      resources: {}
+    inputs: {}
+    metadata: {}
+    name: cleanup-chaos-resources
+    outputs: {}
+  - container:
+      args:
+      - -file=/tmp/chaosengine-gcp-vm-instance-stop-aze.yaml
+      - -saveName=/tmp/engine-name
+      command:
+      - ./chaos-checker
+      image: docker.io/harness/chaos-go-runner:1.38.0
+      name: ""
+      resources: {}
+    inputs:
+      artifacts:
+      - name: gcp-vm-instance-stop-aze
+        path: /tmp/chaosengine-gcp-vm-instance-stop-aze.yaml
+        raw:
+          data: |
+            apiVersion: litmuschaos.io/v1alpha1
+            kind: ChaosEngine
+            metadata:
+              labels:
+                name: gcp-vm-instance-stop
+                app.kubernetes.io/part-of: litmus
+                app.kubernetes.io/component: experiment-job
+                app.kubernetes.io/version: ci
+                workflow_run_id: "{{ workflow.uid }}"
+                workflow_name: k8s-node-restart
+              namespace: "{{workflow.parameters.adminModeNamespace}}"
+              annotations:
+                probeRef: '[{"name":"app-health-check","mode":"Continuous"},{"name":"system-probe","mode":"Edge"}]'
+              generateName: gcp-vm-instance-stop-aze
+            spec:
+              engineState: active
+              terminationGracePeriodSeconds: 30
+              chaosServiceAccount: litmus-admin
+              experiments:
+                - name: gcp-vm-instance-stop
+                  image: docker.io/harness/chaos-go-runner:1.38.1
+                  imagePullPolicy: Always
+                  args:
+                    - -c
+                    - ./experiments -name gcp-vm-instance-stop
+                  command:
+                    - /bin/bash
+                  spec:
+                    components:
+                      env:
+                        - name: TOTAL_CHAOS_DURATION
+                          value: "15"
+                        - name: CHAOS_INTERVAL
+                          value: "15"
+                        - name: SEQUENCE
+                          value: parallel
+                        - name: RAMP_TIME
+                          value: ""
+                        - name: MANAGED_INSTANCE_GROUP
+                          value: disable
+                        - name: VM_INSTANCE_NAMES
+                          value: gke-chaos-workshop-default-pool-3b564968-lnp2
+                        - name: GCP_PROJECT_ID
+                          value: chaos-demo-play
+                        - name: ZONES
+                          value: us-central1-c
+                        - name: DEFAULT_HEALTH_CHECK
+                          value: "false"
+                      securityContext:
+                        podSecurityContext:
+                          runAsUser: 2000
+                          runAsGroup: 0
+                      nodeSelector:
+                        cloud.google.com/gke-nodepool: chaos-pool
+              jobCleanUpPolicy: delete
+              components:
+                runner:
+                  nodeSelector:
+                    cloud.google.com/gke-nodepool: chaos-pool
+    metadata:
+      labels:
+        weight: "10"
+    name: gcp-vm-instance-stop-aze
+    outputs: {}
+status:
+  finishedAt: null
+  startedAt: null
