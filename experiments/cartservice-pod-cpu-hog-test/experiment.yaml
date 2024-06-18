@@ -1,0 +1,247 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  creationTimestamp: null
+  name: cartservice-pod-cpu-hog-test
+  namespace: team-4
+spec:
+  arguments:
+    parameters:
+    - name: adminModeNamespace
+      value: team-4
+  entrypoint: cartservice-pod-cpu-hog
+  podGC:
+    strategy: OnWorkflowCompletion
+  securityContext:
+    runAsGroup: 0
+    runAsNonRoot: true
+    runAsUser: 1000
+  serviceAccountName: argo-chaos
+  templates:
+  - inputs: {}
+    metadata: {}
+    name: cartservice-pod-cpu-hog
+    outputs: {}
+    steps:
+    - - arguments: {}
+        name: pod-cpu-hog-8yv
+        template: pod-cpu-hog-8yv
+    - - arguments: {}
+        name: ec2-memory-hog-xjh
+        template: ec2-memory-hog-xjh
+    - - arguments: {}
+        name: cleanup-chaos-resources
+        template: cleanup-chaos-resources
+  - container:
+      args:
+      - kubectl delete chaosengine -l workflow_run_id={{workflow.uid}} -n {{workflow.parameters.adminModeNamespace}}
+      command:
+      - sh
+      - -c
+      image: docker.io/harness/chaos-go-runner:1.38.0
+      name: ""
+      resources: {}
+    inputs: {}
+    metadata: {}
+    name: cleanup-chaos-resources
+    outputs: {}
+  - container:
+      args:
+      - -file=/tmp/chaosengine-pod-cpu-hog-8yv.yaml
+      - -saveName=/tmp/engine-name
+      command:
+      - ./chaos-checker
+      image: docker.io/harness/chaos-go-runner:1.38.0
+      name: ""
+      resources: {}
+    inputs:
+      artifacts:
+      - name: pod-cpu-hog-8yv
+        path: /tmp/chaosengine-pod-cpu-hog-8yv.yaml
+        raw:
+          data: |
+            apiVersion: litmuschaos.io/v1alpha1
+            kind: ChaosEngine
+            metadata:
+              namespace: "{{workflow.parameters.adminModeNamespace}}"
+              labels:
+                name: pod-cpu-hog
+                app.kubernetes.io/part-of: litmus
+                app.kubernetes.io/component: experiment-job
+                app.kubernetes.io/runtime-api-usage: "true"
+                app.kubernetes.io/version: ci
+                workflow_run_id: "{{ workflow.uid }}"
+                workflow_name: cartservice-pod-cpu-hog
+              annotations:
+                probeRef: '[{"name":"system-probe","mode":"Edge"},{"name":"app-health-check","mode":"Continuous"},{"name":"boutique-website-latency-check","mode":"OnChaos"}]'
+              generateName: pod-cpu-hog-8yv
+            spec:
+              engineState: active
+              terminationGracePeriodSeconds: 30
+              appinfo:
+                appns: team-4
+                applabel: app=cartservice
+                appkind: deployment
+              chaosServiceAccount: litmus-admin
+              experiments:
+                - name: pod-cpu-hog
+                  image: docker.io/harness/chaos-go-runner:main-latest
+                  imagePullPolicy: Always
+                  args:
+                    - -c
+                    - ./experiments -name pod-cpu-hog
+                  command:
+                    - /bin/bash
+                  spec:
+                    components:
+                      env:
+                        - name: TOTAL_CHAOS_DURATION
+                          value: "60"
+                        - name: CPU_CORES
+                          value: "2"
+                        - name: CPU_LOAD
+                          value: "100"
+                        - name: PODS_AFFECTED_PERC
+                          value: ""
+                        - name: RAMP_TIME
+                          value: ""
+                        - name: LIB_IMAGE
+                          value: docker.io/harness/chaos-go-runner:1.38.1
+                        - name: STRESS_IMAGE
+                          value: alexeiled/stress-ng:latest-ubuntu
+                        - name: CONTAINER_RUNTIME
+                          value: containerd
+                        - name: SOCKET_PATH
+                          value: /run/containerd/containerd.sock
+                        - name: TARGET_CONTAINER
+                          value: ""
+                        - name: TARGET_PODS
+                          value: ""
+                        - name: DEFAULT_HEALTH_CHECK
+                          value: "false"
+                        - name: NODE_LABEL
+                          value: ""
+                        - name: SEQUENCE
+                          value: parallel
+                      securityContext:
+                        podSecurityContext:
+                          runAsUser: 2000
+                          runAsGroup: 0
+              jobCleanUpPolicy: delete
+    metadata:
+      labels:
+        weight: "10"
+    name: pod-cpu-hog-8yv
+    outputs: {}
+  - container:
+      args:
+      - -file=/tmp/chaosengine-ec2-memory-hog-xjh.yaml
+      - -saveName=/tmp/engine-name
+      command:
+      - ./chaos-checker
+      image: docker.io/harness/chaos-go-runner:1.38.0
+      name: ""
+      resources: {}
+    inputs:
+      artifacts:
+      - name: ec2-memory-hog-xjh
+        path: /tmp/chaosengine-ec2-memory-hog-xjh.yaml
+        raw:
+          data: |
+            apiVersion: litmuschaos.io/v1alpha1
+            kind: ChaosEngine
+            metadata:
+              namespace: "{{workflow.parameters.adminModeNamespace}}"
+              labels:
+                name: ec2-memory-hog
+                app.kubernetes.io/part-of: litmus
+                app.kubernetes.io/component: experiment-job
+                app.kubernetes.io/version: ci
+                app.kubernetes.io/enableAWSAccessViaSecrets: disable
+                workflow_run_id: "{{ workflow.uid }}"
+                workflow_name: cartservice-pod-cpu-hog
+              annotations:
+                probeRef: '[{"name":"testpayments","mode":"Edge"}]'
+              generateName: ec2-memory-hog-xjh
+            spec:
+              engineState: active
+              terminationGracePeriodSeconds: 30
+              chaosServiceAccount: litmus-admin
+              experiments:
+                - name: ec2-memory-hog
+                  image: docker.io/harness/chaos-go-runner:1.38.1
+                  imagePullPolicy: Always
+                  args:
+                    - -c
+                    - ./experiments -name ec2-memory-hog
+                  command:
+                    - /bin/bash
+                  spec:
+                    components:
+                      env:
+                        - name: TOTAL_CHAOS_DURATION
+                          value: "30"
+                        - name: RAMP_TIME
+                          value: ""
+                        - name: REGION
+                          value: ""
+                        - name: EC2_INSTANCE_ID
+                          value: ""
+                        - name: MEMORY_CONSUMPTION
+                          value: "2"
+                        - name: MACHINE
+                          value: windows
+                        - name: MEMORY_PERCENTAGE
+                          value: "0"
+                        - name: NUMBER_OF_WORKERS
+                          value: "1"
+                        - name: DEFAULT_HEALTH_CHECK
+                          value: "false"
+                        - name: AWS_SHARED_CREDENTIALS_FILE
+                          value: /tmp/cloud_config.yml
+                        - name: SEQUENCE
+                          value: parallel
+                      securityContext:
+                        podSecurityContext:
+                          runAsUser: 2000
+                          runAsGroup: 0
+                    probe:
+                      - name: healthcheck
+                        type: cmdProbe
+                        mode: Edge
+                        runProperties:
+                          probeTimeout: 5s
+                          retry: 0
+                          interval: 1s
+                          stopOnFailure: false
+                        cmdProbe/inputs:
+                          command: ./healthcheck -name aws-ec2
+                          source:
+                            image: docker.io/harness/chaos-go-runner:1.38.1
+                            inheritInputs: true
+                            volumeMount:
+                              - mountPath: /var/run/secrets/eks.amazonaws.com/serviceaccount
+                                name: aws-iam-token
+                                readOnly: true
+                            volumes:
+                              - name: aws-iam-token
+                                projected:
+                                  defaultMode: 420
+                                  sources:
+                                    - serviceAccountToken:
+                                        audience: sts.amazonaws.com
+                                        expirationSeconds: 86400
+                                        path: token
+                          comparator:
+                            type: string
+                            criteria: contains
+                            value: "[P000]"
+              jobCleanUpPolicy: delete
+    metadata:
+      labels:
+        weight: "10"
+    name: ec2-memory-hog-xjh
+    outputs: {}
+status:
+  finishedAt: null
+  startedAt: null
