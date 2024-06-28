@@ -69,7 +69,7 @@ spec:
                 workflow_run_id: "{{ workflow.uid }}"
                 workflow_name: cartservice-pod-network-loss
               annotations:
-                probeRef: '[{"name":"system-probe","mode":"EOT"},{"name":"app-health-check","mode":"Continuous"}]'
+                probeRef: '[{"probeID":"system-probe","mode":"EOT"},{"probeID":"app-health-check","mode":"Continuous"}]'
               generateName: pod-network-loss-wb4
             spec:
               engineState: active

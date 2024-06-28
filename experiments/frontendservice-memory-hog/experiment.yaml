@@ -69,7 +69,7 @@ spec:
                 workflow_run_id: "{{ workflow.uid }}"
                 workflow_name: frontendservice-memory-hog
               annotations:
-                probeRef: '[{"name":"system-probe","mode":"Edge"},{"name":"app-health-check","mode":"Continuous"},{"name":"boutique-website-latency-check","mode":"OnChaos"}]'
+                probeRef: '[{"probeID":"system-probe","mode":"Edge"},{"probeID":"app-health-check","mode":"Continuous"},{"probeID":"boutique-website-latency-check","mode":"OnChaos"}]'
               generateName: pod-memory-hog-w6d
             spec:
               engineState: active
