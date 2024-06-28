@@ -1,7 +1,6 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
-  creationTimestamp: null
   name: cartservice-pod-cpu-hog
   namespace: hce
 spec:
@@ -76,7 +75,7 @@ spec:
               engineState: active
               terminationGracePeriodSeconds: 30
               appinfo:
-                appns: team-1
+                appns: team-5
                 applabel: app=cartservice
                 appkind: deployment
               chaosServiceAccount: litmus-admin
@@ -130,6 +129,3 @@ spec:
         weight: "10"
     name: pod-cpu-hog-8yv
     outputs: {}
-status:
-  finishedAt: null
-  startedAt: null
