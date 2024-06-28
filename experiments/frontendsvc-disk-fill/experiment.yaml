@@ -1,7 +1,6 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
-  creationTimestamp: null
   name: frontendsvc-disk-fill
   namespace: hce
 spec:
@@ -77,7 +76,7 @@ spec:
               terminationGracePeriodSeconds: 30
               auxiliaryAppInfo: ""
               appinfo:
-                appns: team-1
+                appns: team-5
                 applabel: app=frontend
                 appkind: deployment
               chaosServiceAccount: litmus-admin
@@ -131,6 +130,3 @@ spec:
         weight: "10"
     name: disk-fill-d86
     outputs: {}
-status:
-  finishedAt: null
-  startedAt: null
