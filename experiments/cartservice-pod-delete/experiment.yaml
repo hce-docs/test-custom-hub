@@ -1,7 +1,6 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
-  creationTimestamp: null
   name: cartservice-pod-delete
   namespace: hce
 spec:
@@ -73,7 +72,7 @@ spec:
               generateName: pod-delete-g9h
             spec:
               appinfo:
-                appns: team-1
+                appns: team-5
                 applabel: app=cartservice
                 appkind: deployment
               engineState: active
@@ -121,6 +120,3 @@ spec:
         weight: "10"
     name: pod-delete-g9h
     outputs: {}
-status:
-  finishedAt: null
-  startedAt: null
