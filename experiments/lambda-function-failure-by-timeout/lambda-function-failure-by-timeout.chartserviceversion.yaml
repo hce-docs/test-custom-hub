@@ -1,0 +1,31 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChartServiceVersion
+metadata:
+  annotations:
+    categories: ""
+    chartDescription: ""
+    createdAt: ""
+    repository: ""
+    support: ""
+    vendor: ""
+  name: lambda-function-failure-by-timeout
+packageInfo:
+  experiments: null
+  packageName: ""
+spec:
+  categoryDescription: Causes the timeout of a lambda function to be updated to specified
+    value.
+  displayName: lambda-function-failure-by-timeout
+  experiments: null
+  faults:
+  - description: ""
+    displayName: ""
+    name: lambda-update-function-timeout-mgk
+    plan: null
+    supportedVersion: null
+  keywords:
+  - lambda
+  plan: null
+  provider:
+    name: ""
+  scenarios: null
