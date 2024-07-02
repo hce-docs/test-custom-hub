@@ -1,0 +1,32 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChartServiceVersion
+metadata:
+  annotations:
+    categories: ""
+    chartDescription: ""
+    createdAt: ""
+    repository: ""
+    support: ""
+    vendor: ""
+  name: fargate-ecs-cartservice-memory-hog-hy3
+packageInfo:
+  experiments: null
+  packageName: ""
+spec:
+  categoryDescription: Injects memory stress chaos on a target ECS fargate service(cartservice)
+    for 60s chaos duration
+  displayName: fargate-ecs-cartservice-memory-hog-hy3
+  experiments: null
+  faults:
+  - description: ""
+    displayName: ""
+    name: ecs-fargate-memory-hog-y7j
+    plan: null
+    supportedVersion: null
+  keywords:
+  - fargate
+  - ecs
+  plan: null
+  provider:
+    name: ""
+  scenarios: null

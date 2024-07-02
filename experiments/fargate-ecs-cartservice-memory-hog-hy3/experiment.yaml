@@ -1,0 +1,121 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  creationTimestamp: null
+  name: fargate-ecs-cartservice-memory-hog-hy3
+  namespace: hce
+spec:
+  arguments:
+    parameters:
+    - name: adminModeNamespace
+      value: hce
+  entrypoint: ecs-fargate-memory-hog
+  podGC:
+    strategy: OnWorkflowCompletion
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+  serviceAccountName: argo-chaos
+  templates:
+  - inputs: {}
+    metadata: {}
+    name: ecs-fargate-memory-hog
+    outputs: {}
+    steps:
+    - - arguments: {}
+        name: ecs-fargate-memory-hog-y7j
+        template: ecs-fargate-memory-hog-y7j
+    - - arguments: {}
+        name: cleanup-chaos-resources
+        template: cleanup-chaos-resources
+  - container:
+      args:
+      - kubectl delete chaosengine -l workflow_run_id={{workflow.uid}} -n {{workflow.parameters.adminModeNamespace}}
+      command:
+      - sh
+      - -c
+      image: docker.io/harness/chaos-go-runner:ecs-latest
+      name: ""
+      resources: {}
+    inputs: {}
+    metadata: {}
+    name: cleanup-chaos-resources
+    outputs: {}
+  - container:
+      args:
+      - -file=/tmp/chaosengine-ecs-fargate-memory-hog-y7j.yaml
+      - -saveName=/tmp/engine-name
+      command:
+      - ./chaos-checker
+      image: docker.io/harness/chaos-go-runner:1.39.0
+      name: ""
+      resources: {}
+    inputs:
+      artifacts:
+      - name: ecs-fargate-memory-hog-y7j
+        path: /tmp/chaosengine-ecs-fargate-memory-hog-y7j.yaml
+        raw:
+          data: |
+            apiVersion: litmuschaos.io/v1alpha1
+            kind: ChaosEngine
+            metadata:
+              namespace: "{{workflow.parameters.adminModeNamespace}}"
+              generateName: ecs-fargate-memory-hog-y7j
+              labels:
+                name: ecs-fargate-memory-hog
+                app.kubernetes.io/part-of: litmus
+                app.kubernetes.io/component: experiment-job
+                app.kubernetes.io/enableAWSAccessViaSecrets: disable
+                app.kubernetes.io/version: ci
+                workflow_run_id: "{{ workflow.uid }}"
+                workflow_name: fargate-ecs-cartservice-memory-hog-hy3
+              annotations:
+                probeRef: '[{"probeID":"boutique-app-latency-check","mode":"OnChaos"},{"probeID":"cartservice-health-check","mode":"Continuous"}]'
+            spec:
+              engineState: active
+              chaosServiceAccount: litmus-admin
+              experiments:
+                - name: ecs-fargate-memory-hog
+                  image: docker.io/harness/chaos-go-runner:ecs-latest
+                  imagePullPolicy: Always
+                  args:
+                    - -c
+                    - ./experiments -name ecs-fargate-memory-hog
+                  command:
+                    - /bin/bash
+                  spec:
+                    components:
+                      statusCheckTimeouts:
+                        delay: 2
+                        timeout: 500
+                      env:
+                        - name: TOTAL_CHAOS_DURATION
+                          value: "60"
+                        - name: CHAOS_INTERVAL
+                          value: "10"
+                        - name: RAMP_TIME
+                          value: ""
+                        - name: CLUSTER_NAME
+                          value: ecs-demo
+                        - name: SERVICE_NAME
+                          value: cartservice
+                        - name: SIDECAR_CONTAINER
+                          value: sidecar
+                        - name: MEMORY_IN_MEGABYTE
+                          value: "400"
+                        - name: CONTAINER_IMAGE
+                          value: harness/chaos-go-runner:ecs-latest
+                        - name: REGION
+                          value: us-east-1
+                        - name: TASK_REPLICA_AFFECTED_PERC
+                          value: "100"
+                        - name: AWS_SHARED_CREDENTIALS_FILE
+                          value: /tmp/cloud_config.yml
+    metadata:
+      labels:
+        weight: "10"
+    name: ecs-fargate-memory-hog-y7j
+    outputs: {}
+status:
+  finishedAt: null
+  startedAt: null
