@@ -1,0 +1,32 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChartServiceVersion
+metadata:
+  annotations:
+    categories: ""
+    chartDescription: ""
+    createdAt: ""
+    repository: ""
+    support: ""
+    vendor: ""
+  name: fargate-ecs-cartservice-task-stop
+packageInfo:
+  experiments: null
+  packageName: ""
+spec:
+  categoryDescription: Injects ecs fargate task stop chaos on a target ECS service(cartservice)
+    for 60s chaos duration
+  displayName: fargate-ecs-cartservice-task-stop
+  experiments: null
+  faults:
+  - description: ""
+    displayName: ""
+    name: ecs-task-stop-y7j
+    plan: null
+    supportedVersion: null
+  keywords:
+  - fargate
+  - ecs
+  plan: null
+  provider:
+    name: ""
+  scenarios: null
