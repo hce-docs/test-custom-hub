@@ -1,0 +1,32 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChartServiceVersion
+metadata:
+  annotations:
+    categories: ""
+    chartDescription: ""
+    createdAt: ""
+    repository: ""
+    support: ""
+    vendor: ""
+  name: fargate-ecs-frontend-connectivity-loss
+packageInfo:
+  experiments: null
+  packageName: ""
+spec:
+  categoryDescription: Injects connectivity loss chaos on a target ECS fargate service(frontend)
+    for 60s chaos duration
+  displayName: fargate-ecs-frontend-connectivity-loss
+  experiments: null
+  faults:
+  - description: ""
+    displayName: ""
+    name: ecs-network-restrict-y7j
+    plan: null
+    supportedVersion: null
+  keywords:
+  - fargate
+  - ecs
+  plan: null
+  provider:
+    name: ""
+  scenarios: null
