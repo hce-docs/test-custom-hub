@@ -1,0 +1,29 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChartServiceVersion
+metadata:
+  annotations:
+    categories: ""
+    chartDescription: ""
+    createdAt: ""
+    repository: ""
+    support: ""
+    vendor: ""
+  name: team2
+packageInfo:
+  experiments: null
+  packageName: ""
+spec:
+  categoryDescription: carservice-network-loss
+  displayName: team2
+  experiments: null
+  faults:
+  - description: ""
+    displayName: ""
+    name: pod-network-loss-osj
+    plan: null
+    supportedVersion: null
+  keywords: []
+  plan: null
+  provider:
+    name: ""
+  scenarios: null
