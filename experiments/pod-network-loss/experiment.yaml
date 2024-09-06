@@ -34,7 +34,7 @@ spec:
       command:
       - sh
       - -c
-      image: harbor.mgmt-bld.oncp.dev/platform_tools/harness/chaos-runner:CHAOS-6565-1.41-latest
+      image: harbor.mgmt-bld.oncp.dev/staging_platform_tools/harness/chaos-go-runner:CHAOS-6565-1.41-latest
       name: ""
       resources: {}
     inputs: {}
@@ -47,7 +47,7 @@ spec:
       - -saveName=/tmp/engine-name
       command:
       - ./chaos-checker
-      image: harbor.mgmt-bld.oncp.dev/platform_tools/harness/chaos-runner:CHAOS-6565-1.41-latest
+      image: harbor.mgmt-bld.oncp.dev/staging_platform_tools/harness/chaos-go-runner:CHAOS-6565-1.41-latest
       name: ""
       resources: {}
     inputs:
@@ -84,7 +84,7 @@ spec:
               chaosServiceAccount: litmus-admin
               experiments:
                 - name: pod-network-loss
-                  image: harbor.mgmt-bld.oncp.dev/platform_tools/harness/chaos-runner:CHAOS-6565-1.41-latest
+                  image: harbor.mgmt-bld.oncp.dev/staging_platform_tools/harness/chaos-go-runner:CHAOS-6565-1.41-latest
                   imagePullPolicy: Always
                   args:
                     - -c
@@ -103,7 +103,7 @@ spec:
                         - name: TARGET_CONTAINER
                           value: ""
                         - name: LIB_IMAGE
-                          value: harbor.mgmt-bld.oncp.dev/platform_tools/harness/chaos-runner:CHAOS-6565-1.41-latest
+                          value: harbor.mgmt-bld.oncp.dev/staging_platform_tools/harness/chaos-go-runner:CHAOS-6565-1.41-latest
                         - name: NETWORK_INTERFACE
                           value: eth0
                         - name: NETWORK_PACKET_LOSS_PERCENTAGE
