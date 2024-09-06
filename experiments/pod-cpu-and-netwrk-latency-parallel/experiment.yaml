@@ -1,7 +1,6 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
-  creationTimestamp: null
   name: pod-cpu-and-netwrk-latency-parallel
   namespace: test-lbg
 spec:
@@ -253,6 +252,3 @@ spec:
         weight: "10"
     name: pod-network-latency-n60
     outputs: {}
-status:
-  finishedAt: null
-  startedAt: null
