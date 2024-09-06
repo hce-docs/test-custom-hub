@@ -1,0 +1,154 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  creationTimestamp: null
+  name: pod-network-loss
+  namespace: test-lbg
+spec:
+  arguments:
+    parameters:
+    - name: adminModeNamespace
+      value: test-lbg
+  entrypoint: lbg-network-loss
+  podGC:
+    strategy: OnWorkflowCompletion
+  securityContext:
+    runAsGroup: 0
+    runAsNonRoot: true
+    runAsUser: 1000
+  serviceAccountName: argo-chaos
+  templates:
+  - inputs: {}
+    metadata: {}
+    name: lbg-network-loss
+    outputs: {}
+    steps:
+    - - arguments: {}
+        name: pod-network-loss-2r6
+        template: pod-network-loss-2r6
+    - - arguments: {}
+        name: cleanup-chaos-resources
+        template: cleanup-chaos-resources
+  - container:
+      args:
+      - kubectl delete chaosengine -l workflow_run_id={{workflow.uid}} -n {{workflow.parameters.adminModeNamespace}}
+      command:
+      - sh
+      - -c
+      image: harbor.mgmt-bld.oncp.dev/platform_tools/harness/chaos-runner:CHAOS-6565-1.41-latest
+      name: ""
+      resources: {}
+    inputs: {}
+    metadata: {}
+    name: cleanup-chaos-resources
+    outputs: {}
+  - container:
+      args:
+      - -file=/tmp/chaosengine-pod-network-loss-2r6.yaml
+      - -saveName=/tmp/engine-name
+      command:
+      - ./chaos-checker
+      image: harbor.mgmt-bld.oncp.dev/platform_tools/harness/chaos-runner:CHAOS-6565-1.41-latest
+      name: ""
+      resources: {}
+    inputs:
+      artifacts:
+      - name: pod-network-loss-2r6
+        path: /tmp/chaosengine-pod-network-loss-2r6.yaml
+        raw:
+          data: |
+            apiVersion: litmuschaos.io/v1alpha1
+            kind: ChaosEngine
+            metadata:
+              namespace: "{{workflow.parameters.adminModeNamespace}}"
+              labels:
+                name: pod-network-loss
+                app.kubernetes.io/part-of: litmus
+                app.kubernetes.io/component: experiment-job
+                app.kubernetes.io/runtime-api-usage: "true"
+                app.kubernetes.io/version: ci
+                workflow_run_id: "{{ workflow.uid }}"
+                workflow_name: pod-network-loss
+              annotations:
+                probeRef: '[{"probeID":"kubernetes-system-probe","mode":"EOT"}]'
+              generateName: pod-network-loss-2r6
+            spec:
+              components:
+                runner:
+                  image: harbor.mgmt-bld.oncp.dev/platform_tools/harness/chaos-runner:CHAOS-6565-1.41-latest
+              engineState: active
+              terminationGracePeriodSeconds: 30
+              appinfo:
+                appns: ns-kcl-mgmt-deploy-chaos
+                applabel: app=chaos-exporter
+                appkind: deployment
+              chaosServiceAccount: litmus-admin
+              experiments:
+                - name: pod-network-loss
+                  image: harbor.mgmt-bld.oncp.dev/platform_tools/harness/chaos-runner:CHAOS-6565-1.41-latest
+                  imagePullPolicy: Always
+                  args:
+                    - -c
+                    - ./experiments -name pod-network-loss
+                  command:
+                    - /bin/bash
+                  spec:
+                    components:
+                      env:
+                        - name: http_proxy
+                          value: http://ep.threatpulse.net:80
+                        - name: https_proxy
+                          value: http://ep.threatpulse.net:80
+                        - name: no_proxy
+                          value: localhost,127.0.0.1,metadata.google.internal,.google.com,.googleapis.com,.cloudendpointsapis.com,.oncp.dev,172.31.32.1
+                        - name: TARGET_CONTAINER
+                          value: ""
+                        - name: LIB_IMAGE
+                          value: harbor.mgmt-bld.oncp.dev/platform_tools/harness/chaos-runner:CHAOS-6565-1.41-latest
+                        - name: NETWORK_INTERFACE
+                          value: eth0
+                        - name: NETWORK_PACKET_LOSS_PERCENTAGE
+                          value: "100"
+                        - name: TOTAL_CHAOS_DURATION
+                          value: "60"
+                        - name: RAMP_TIME
+                          value: ""
+                        - name: PODS_AFFECTED_PERC
+                          value: ""
+                        - name: DEFAULT_HEALTH_CHECK
+                          value: "false"
+                        - name: TARGET_PODS
+                          value: ""
+                        - name: NODE_LABEL
+                          value: ""
+                        - name: CONTAINER_RUNTIME
+                          value: containerd
+                        - name: DESTINATION_IPS
+                          value: ""
+                        - name: DESTINATION_HOSTS
+                          value: ""
+                        - name: SOURCE_PORTS
+                          value: ""
+                        - name: DESTINATION_PORTS
+                          value: ""
+                        - name: SOCKET_PATH
+                          value: /run/containerd/containerd.sock
+                        - name: SEQUENCE
+                          value: parallel
+                        - name: INDIRECT_UPLOAD
+                          value: "true"
+                        - name: LOG_WATCHER_IMAGE
+                          value: harbor.mgmt-bld.oncp.dev/platform_tools_rtl/harness/chaos-log-watcher:1.43.0
+                      securityContext:
+                        podSecurityContext:
+                          runAsUser: 2000
+                          runAsGroup: 0
+              jobCleanUpPolicy: delete
+    metadata:
+      labels:
+        weight: "10"
+    name: pod-network-loss-2r6
+    outputs: {}
+status:
+  finishedAt: null
+  startedAt: null
