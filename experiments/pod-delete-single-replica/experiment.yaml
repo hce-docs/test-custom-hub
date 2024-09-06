@@ -29,7 +29,7 @@ spec:
       - -saveName=/tmp/engine-name
       command:
       - ./chaos-checker
-      image: docker.io/harness/chaos-go-runner:1.44.0
+      image: harbor.mgmt-bld.oncp.dev/platform_tools/harness/chaos-go-runner:CHAOS-6565-1.41-latest
       name: ""
       resources: {}
     inputs:
