@@ -1,0 +1,38 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChartServiceVersion
+metadata:
+  annotations:
+    categories: ""
+    chartDescription: ""
+    createdAt: ""
+    repository: ""
+    support: ""
+    vendor: ""
+  name: pod-cpu-and-netwrk-latency-parallel
+packageInfo:
+  experiments: null
+  packageName: ""
+spec:
+  categoryDescription: ""
+  displayName: pod-cpu-and-netwrk-latency-parallel
+  experiments: null
+  faults:
+  - chaosType: ""
+    description: ""
+    displayName: ""
+    name: pod-cpu-hog-313
+    plan: null
+    supportedVersion: null
+  - chaosType: ""
+    description: ""
+    displayName: ""
+    name: pod-network-latency-n60
+    plan: null
+    supportedVersion: null
+  keywords:
+  - kubernetes
+  - multi-fault
+  plan: null
+  provider:
+    name: ""
+  scenarios: null
