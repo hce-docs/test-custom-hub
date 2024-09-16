@@ -1,14 +1,13 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
-  creationTimestamp: null
   name: pod-dependency-certificate-expire
-  namespace: test-lbg
+  namespace: app07360
 spec:
   arguments:
     parameters:
     - name: adminModeNamespace
-      value: test-lbg
+      value: app07360
   entrypoint: pod-dependency-certificate-expire
   podGC:
     strategy: OnWorkflowCompletion
@@ -75,7 +74,7 @@ spec:
               engineState: active
               terminationGracePeriodSeconds: 30
               appinfo:
-                appns: test-lbg
+                appns: app07360
                 applabel: app=chaos-exporter
                 appkind: deployment
               chaosServiceAccount: litmus-admin
@@ -127,6 +126,3 @@ spec:
         weight: "10"
     name: time-chaos-xu2
     outputs: {}
-status:
-  finishedAt: null
-  startedAt: null
