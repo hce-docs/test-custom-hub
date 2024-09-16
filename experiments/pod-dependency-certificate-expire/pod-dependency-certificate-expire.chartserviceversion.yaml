@@ -1,0 +1,31 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChartServiceVersion
+metadata:
+  annotations:
+    categories: ""
+    chartDescription: ""
+    createdAt: ""
+    repository: ""
+    support: ""
+    vendor: ""
+  name: pod-dependency-certificate-expire
+packageInfo:
+  experiments: null
+  packageName: ""
+spec:
+  categoryDescription: ""
+  displayName: pod-dependency-certificate-expire
+  experiments: null
+  faults:
+  - chaosType: ""
+    description: ""
+    displayName: ""
+    name: time-chaos-xu2
+    plan: null
+    supportedVersion: null
+  keywords:
+  - kubernetes
+  plan: null
+  provider:
+    name: ""
+  scenarios: null
