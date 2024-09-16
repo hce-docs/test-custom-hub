@@ -1,0 +1,31 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChartServiceVersion
+metadata:
+  annotations:
+    categories: ""
+    chartDescription: ""
+    createdAt: ""
+    repository: ""
+    support: ""
+    vendor: ""
+  name: pod-dependency-failure
+packageInfo:
+  experiments: null
+  packageName: ""
+spec:
+  categoryDescription: ""
+  displayName: pod-dependency-failure
+  experiments: null
+  faults:
+  - chaosType: ""
+    description: ""
+    displayName: ""
+    name: pod-network-loss-v9x
+    plan: null
+    supportedVersion: null
+  keywords:
+  - kubernetes
+  plan: null
+  provider:
+    name: ""
+  scenarios: null
