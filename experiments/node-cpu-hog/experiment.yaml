@@ -1,0 +1,123 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  creationTimestamp: null
+  name: node-cpu-hog
+  namespace: hce
+spec:
+  arguments:
+    parameters:
+    - name: adminModeNamespace
+      value: hce
+  entrypoint: node-cpu-hog
+  podGC:
+    strategy: OnWorkflowCompletion
+  securityContext:
+    runAsGroup: 0
+    runAsNonRoot: true
+    runAsUser: 1000
+  serviceAccountName: argo-chaos
+  templates:
+  - inputs: {}
+    metadata: {}
+    name: node-cpu-hog
+    outputs: {}
+    steps:
+    - - arguments: {}
+        name: node-cpu-hog-wrk
+        template: node-cpu-hog-wrk
+    - - arguments: {}
+        name: cleanup-chaos-resources
+        template: cleanup-chaos-resources
+  - container:
+      args:
+      - kubectl delete chaosengine -l workflow_run_id={{workflow.uid}} -n {{workflow.parameters.adminModeNamespace}}
+      command:
+      - sh
+      - -c
+      image: artifactory.nordstrom.com/chaostest-remote/harness/chaos-go-runner:1.44.0
+      name: ""
+      resources: {}
+    inputs: {}
+    metadata: {}
+    name: cleanup-chaos-resources
+    outputs: {}
+  - container:
+      args:
+      - -file=/tmp/chaosengine-node-cpu-hog-wrk.yaml
+      - -saveName=/tmp/engine-name
+      command:
+      - ./chaos-checker
+      image: artifactory.nordstrom.com/chaostest-remote/harness/chaos-go-runner:1.44.0
+      name: ""
+      resources: {}
+    inputs:
+      artifacts:
+      - name: node-cpu-hog-wrk
+        path: /tmp/chaosengine-node-cpu-hog-wrk.yaml
+        raw:
+          data: |
+            apiVersion: litmuschaos.io/v1alpha1
+            kind: ChaosEngine
+            metadata:
+              namespace: "{{workflow.parameters.adminModeNamespace}}"
+              labels:
+                name: node-cpu-hog
+                app.kubernetes.io/part-of: litmus
+                app.kubernetes.io/component: experiment-job
+                app.kubernetes.io/version: ci
+                workflow_run_id: "{{ workflow.uid }}"
+                workflow_name: node-cpu-hog
+              annotations:
+                probeRef: '[{"probeID":"kubernetes-system-probe","mode":"Edge"}]'
+              generateName: node-cpu-hog-wrk
+            spec:
+              engineState: active
+              terminationGracePeriodSeconds: 30
+              auxiliaryAppInfo: ""
+              chaosServiceAccount: litmus-admin
+              experiments:
+                - name: node-cpu-hog
+                  image: artifactory.nordstrom.com/chaostest-remote/harness/chaos-go-runner:1.44.1
+                  imagePullPolicy: Always
+                  args:
+                    - -c
+                    - ./experiments -name node-cpu-hog
+                  command:
+                    - /bin/bash
+                  spec:
+                    components:
+                      env:
+                        - name: TOTAL_CHAOS_DURATION
+                          value: "90"
+                        - name: RAMP_TIME
+                          value: ""
+                        - name: NODE_CPU_CORE
+                          value: "8"
+                        - name: CPU_LOAD
+                          value: "100"
+                        - name: TARGET_NODES
+                          value: ""
+                        - name: NODE_LABEL
+                          value: ""
+                        - name: LIB_IMAGE
+                          value: artifactory.nordstrom.com/chaostest-remote/harness/chaos-go-runner:1.44.1
+                        - name: NODES_AFFECTED_PERC
+                          value: ""
+                        - name: DEFAULT_HEALTH_CHECK
+                          value: "false"
+                        - name: SEQUENCE
+                          value: parallel
+                      securityContext:
+                        podSecurityContext:
+                          runAsUser: 2000
+                          runAsGroup: 0
+              jobCleanUpPolicy: delete
+    metadata:
+      labels:
+        weight: "10"
+    name: node-cpu-hog-wrk
+    outputs: {}
+status:
+  finishedAt: null
+  startedAt: null
