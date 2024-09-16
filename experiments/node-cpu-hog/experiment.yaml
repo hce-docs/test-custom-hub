@@ -1,7 +1,6 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
-  creationTimestamp: null
   name: node-cpu-hog
   namespace: hce
 spec:
@@ -118,6 +117,3 @@ spec:
         weight: "10"
     name: node-cpu-hog-wrk
     outputs: {}
-status:
-  finishedAt: null
-  startedAt: null
