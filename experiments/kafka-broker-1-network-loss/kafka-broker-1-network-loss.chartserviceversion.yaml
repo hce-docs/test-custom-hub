@@ -1,0 +1,36 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChartServiceVersion
+metadata:
+  annotations:
+    categories: ""
+    chartDescription: ""
+    createdAt: ""
+    repository: ""
+    support: ""
+    vendor: ""
+  name: kafka-broker-1-network-loss
+packageInfo:
+  experiments: null
+  packageName: ""
+spec:
+  categoryDescription: ""
+  displayName: kafka-broker-1-network-loss
+  experiments: null
+  faults:
+  - chaosType: ""
+    description: ""
+    displayName: ""
+    name: linux-network-loss
+    plan: null
+    supportedVersion: null
+  keywords:
+  - kafka
+  - dependency
+  - network
+  - ec2
+  - linux
+  - apple-store
+  plan: null
+  provider:
+    name: ""
+  scenarios: null

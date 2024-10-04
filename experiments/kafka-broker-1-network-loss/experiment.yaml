@@ -1,0 +1,29 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: LinuxChaosExperiment
+metadata:
+  creationTimestamp: null
+  name: kafka-broker-1-network-loss
+spec:
+  experimentId: ""
+  experimentRunId: ""
+  steps:
+  - - name: linux-network-loss-iov
+  tasks:
+  - chaosInfra: ""
+    definition:
+      chaos:
+        experiment: linux-network-loss
+        networkChaos/inputs:
+          duration: 60s
+          networkInterfaces: ens5
+          packetLossPercentage: 100
+          whitelistSSH: true
+    name: linux-network-loss-iov
+    probeRef:
+    - mode: Continuous
+      probeID: verify-producer-health
+    taskType: chaos
+    weight: 10
+status:
+  finishedAt: null
+  startedAt: null
