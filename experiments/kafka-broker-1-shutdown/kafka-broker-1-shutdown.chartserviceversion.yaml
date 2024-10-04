@@ -1,0 +1,33 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChartServiceVersion
+metadata:
+  annotations:
+    categories: ""
+    chartDescription: ""
+    createdAt: ""
+    repository: ""
+    support: ""
+    vendor: ""
+  name: kafka-broker-1-shutdown
+packageInfo:
+  experiments: null
+  packageName: ""
+spec:
+  categoryDescription: ""
+  displayName: kafka-broker-1-shutdown
+  experiments: null
+  faults:
+  - chaosType: ""
+    description: ""
+    displayName: ""
+    name: ec2-stop-by-id-e8l
+    plan: null
+    supportedVersion: null
+  keywords:
+  - kafka
+  - ec2
+  - apple-store
+  plan: null
+  provider:
+    name: ""
+  scenarios: null

@@ -1,0 +1,146 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  creationTimestamp: null
+  name: kafka-broker-1-shutdown
+  namespace: hce
+spec:
+  arguments:
+    parameters:
+    - name: adminModeNamespace
+      value: hce
+  entrypoint: kafak-broker-1-instance-stop
+  podGC:
+    strategy: OnWorkflowCompletion
+  securityContext:
+    runAsGroup: 0
+    runAsNonRoot: true
+    runAsUser: 1000
+  serviceAccountName: argo-chaos
+  templates:
+  - inputs: {}
+    metadata: {}
+    name: kafak-broker-1-instance-stop
+    outputs: {}
+    steps:
+    - - arguments: {}
+        name: ec2-stop-by-id-e8l
+        template: ec2-stop-by-id-e8l
+    - - arguments: {}
+        name: cleanup-chaos-resources
+        template: cleanup-chaos-resources
+  - container:
+      args:
+      - kubectl delete chaosengine -l workflow_run_id={{workflow.uid}} -n {{workflow.parameters.adminModeNamespace}}
+      command:
+      - sh
+      - -c
+      image: docker.io/harness/chaos-go-runner:1.45.0
+      name: ""
+      resources: {}
+    inputs: {}
+    metadata: {}
+    name: cleanup-chaos-resources
+    outputs: {}
+  - container:
+      args:
+      - -file=/tmp/chaosengine-ec2-stop-by-id-e8l.yaml
+      - -saveName=/tmp/engine-name
+      command:
+      - ./chaos-checker
+      image: docker.io/harness/chaos-go-runner:1.45.0
+      name: ""
+      resources: {}
+    inputs:
+      artifacts:
+      - name: ec2-stop-by-id-e8l
+        path: /tmp/chaosengine-ec2-stop-by-id-e8l.yaml
+        raw:
+          data: |
+            apiVersion: litmuschaos.io/v1alpha1
+            kind: ChaosEngine
+            metadata:
+              annotations:
+                probeRef: '[{"probeID":"app-functionality-check","mode":"Edge"},{"probeID":"shipping-health-check","mode":"Continuous"},{"probeID":"invoicing-health-check","mode":"Continuous"},{"probeID":"verify-kafka-service-restoration","mode":"EOT"},{"probeID":"verify-kafka-broker-count","mode":"Edge"},{"probeID":"verify-zero-under-replicated-partitions","mode":"Edge"},{"probeID":"apple-store-workloads-status-check","mode":"Edge"}]'
+              creationTimestamp: null
+              generateName: ec2-stop-by-id-e8l
+              labels:
+                app.kubernetes.io/component: experiment-job
+                app.kubernetes.io/enableAWSAccessViaSecrets: enable
+                app.kubernetes.io/part-of: litmus
+                app.kubernetes.io/version: ci
+                name: ec2-stop-by-id
+                workflow_name: kafka-broker-1-shutdown
+                workflow_run_id: "{{ workflow.uid }}"
+              namespace: "{{workflow.parameters.adminModeNamespace}}"
+            spec:
+              chaosServiceAccount: litmus-admin
+              components:
+                runner:
+                  resources: {}
+              engineState: active
+              experiments:
+                - args:
+                    - -c
+                    - ./experiments -name ec2-stop-by-id
+                  command:
+                    - /bin/bash
+                  image: docker.io/harness/chaos-go-runner:1.45.0
+                  imagePullPolicy: Always
+                  name: ec2-stop-by-id
+                  spec:
+                    components:
+                      env:
+                        - name: TOTAL_CHAOS_DURATION
+                          value: "30"
+                        - name: CHAOS_INTERVAL
+                          value: "30"
+                        - name: RAMP_TIME
+                          value: ""
+                        - name: DEFAULT_HEALTH_CHECK
+                          value: "false"
+                        - name: MANAGED_NODEGROUP
+                          value: disable
+                        - name: EC2_INSTANCE_ID
+                          value: i-01465e7cc2a3b0bec
+                        - name: REGION
+                          value: us-east-1
+                        - name: SEQUENCE
+                          value: parallel
+                        - name: AWS_SHARED_CREDENTIALS_FILE
+                          value: /tmp/cloud_config.yml
+                      projectedVolumes:
+                        - mountPath: /var/run/secrets/eks.amazonaws.com/serviceaccount
+                          name: aws-iam-token
+                          projected:
+                            defaultMode: 420
+                            sources:
+                              - serviceAccountToken:
+                                  audience: sts.amazonaws.com
+                                  expirationSeconds: 86400
+                                  path: token
+                          readOnly: true
+                      resources: {}
+                      securityContext:
+                        containerSecurityContext: {}
+                        podSecurityContext:
+                          runAsGroup: 0
+                          runAsUser: 2000
+                      statusCheckTimeouts: {}
+                      secrets:
+                        - name: cloud-secret
+                          mountPath: /tmp/
+                    rank: 0
+              jobCleanUpPolicy: delete
+              terminationGracePeriodSeconds: 30
+            status:
+              engineStatus: ""
+              experiments: null
+    metadata:
+      labels:
+        weight: "10"
+    name: ec2-stop-by-id-e8l
+    outputs: {}
+status:
+  finishedAt: null
+  startedAt: null
