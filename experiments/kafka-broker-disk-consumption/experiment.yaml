@@ -1,0 +1,31 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: LinuxChaosExperiment
+metadata:
+  creationTimestamp: null
+  name: kafka-broker-disk-consumption
+spec:
+  experimentId: ""
+  experimentRunId: ""
+  steps:
+  - - name: linux-disk-io-stress-5sm
+  tasks:
+  - chaosInfra: ""
+    definition:
+      chaos:
+        experiment: linux-disk-io-stress
+        stressChaos/inputs:
+          duration: 90s
+          fileSystemUtilisation: 100%
+          volumeMountPath: /data/kafka
+          workers: 4
+    name: linux-disk-io-stress-5sm
+    probeRef:
+    - mode: Edge
+      probeID: verify-producer-health
+    - mode: EOT
+      probeID: verify-kafka-restoration-linux
+    taskType: chaos
+    weight: 10
+status:
+  finishedAt: null
+  startedAt: null

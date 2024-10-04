@@ -1,0 +1,36 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChartServiceVersion
+metadata:
+  annotations:
+    categories: ""
+    chartDescription: ""
+    createdAt: ""
+    repository: ""
+    support: ""
+    vendor: ""
+  name: kafka-broker-disk-consumption
+packageInfo:
+  experiments: null
+  packageName: ""
+spec:
+  categoryDescription: ""
+  displayName: kafka-broker-disk-consumption
+  experiments: null
+  faults:
+  - chaosType: ""
+    description: ""
+    displayName: ""
+    name: linux-disk-io-stress
+    plan: null
+    supportedVersion: null
+  keywords:
+  - kafka
+  - ec2
+  - linux
+  - disk
+  - resource
+  - apple-store
+  plan: null
+  provider:
+    name: ""
+  scenarios: null
