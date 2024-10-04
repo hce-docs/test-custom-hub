@@ -1,0 +1,36 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChartServiceVersion
+metadata:
+  annotations:
+    categories: ""
+    chartDescription: ""
+    createdAt: ""
+    repository: ""
+    support: ""
+    vendor: ""
+  name: orders-slowness-via-cpu-starvation
+packageInfo:
+  experiments: null
+  packageName: ""
+spec:
+  categoryDescription: ""
+  displayName: orders-slowness-via-cpu-starvation
+  experiments: null
+  faults:
+  - chaosType: ""
+    description: ""
+    displayName: ""
+    name: pod-cpu-hog-hno
+    plan: null
+    supportedVersion: null
+  keywords:
+  - rke
+  - K8s
+  - apple-store
+  - resource
+  - cpu
+  - orders
+  plan: null
+  provider:
+    name: ""
+  scenarios: null
