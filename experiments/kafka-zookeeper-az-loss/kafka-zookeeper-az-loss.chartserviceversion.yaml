@@ -1,0 +1,37 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChartServiceVersion
+metadata:
+  annotations:
+    categories: ""
+    chartDescription: ""
+    createdAt: ""
+    repository: ""
+    support: ""
+    vendor: ""
+  name: kafka-zookeeper-az-loss
+packageInfo:
+  experiments: null
+  packageName: ""
+spec:
+  categoryDescription: ""
+  displayName: kafka-zookeeper-az-loss
+  experiments: null
+  faults:
+  - chaosType: ""
+    description: ""
+    displayName: ""
+    name: ec2-stop-by-tag-vgt
+    plan: null
+    supportedVersion: null
+  keywords:
+  - kafka
+  - zookeeper
+  - ec2
+  - dr
+  - az
+  - apple-store
+  - network
+  plan: null
+  provider:
+    name: ""
+  scenarios: null
