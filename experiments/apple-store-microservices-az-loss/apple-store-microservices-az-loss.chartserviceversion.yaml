@@ -1,0 +1,35 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChartServiceVersion
+metadata:
+  annotations:
+    categories: ""
+    chartDescription: ""
+    createdAt: ""
+    repository: ""
+    support: ""
+    vendor: ""
+  name: apple-store-microservices-az-loss
+packageInfo:
+  experiments: null
+  packageName: ""
+spec:
+  categoryDescription: ""
+  displayName: apple-store-microservices-az-loss
+  experiments: null
+  faults:
+  - chaosType: ""
+    description: ""
+    displayName: ""
+    name: pod-network-loss-k44
+    plan: null
+    supportedVersion: null
+  keywords:
+  - rke
+  - K8s
+  - apple-store
+  - az
+  - dr
+  plan: null
+  provider:
+    name: ""
+  scenarios: null
