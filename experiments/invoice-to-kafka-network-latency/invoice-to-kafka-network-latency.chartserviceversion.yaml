@@ -1,0 +1,36 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChartServiceVersion
+metadata:
+  annotations:
+    categories: ""
+    chartDescription: ""
+    createdAt: ""
+    repository: ""
+    support: ""
+    vendor: ""
+  name: invoice-to-kafka-network-latency
+packageInfo:
+  experiments: null
+  packageName: ""
+spec:
+  categoryDescription: ""
+  displayName: invoice-to-kafka-network-latency
+  experiments: null
+  faults:
+  - chaosType: ""
+    description: ""
+    displayName: ""
+    name: pod-network-latency-keu
+    plan: null
+    supportedVersion: null
+  keywords:
+  - rke
+  - kafka
+  - dependency
+  - network
+  - K8s
+  - apple-store
+  plan: null
+  provider:
+    name: ""
+  scenarios: null
