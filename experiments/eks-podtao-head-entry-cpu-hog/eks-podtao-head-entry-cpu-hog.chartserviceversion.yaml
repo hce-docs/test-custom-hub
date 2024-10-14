@@ -1,0 +1,33 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChartServiceVersion
+metadata:
+  annotations:
+    categories: ""
+    chartDescription: ""
+    createdAt: ""
+    repository: ""
+    support: ""
+    vendor: ""
+  name: eks-podtao-head-entry-cpu-hog
+packageInfo:
+  experiments: null
+  packageName: ""
+spec:
+  categoryDescription: ""
+  displayName: eks-podtao-head-entry-cpu-hog
+  experiments: null
+  faults:
+  - chaosType: ""
+    description: ""
+    displayName: ""
+    name: pod-cpu-hog-gyc
+    plan: null
+    supportedVersion: null
+  keywords:
+  - eks
+  - podtatohead-entry
+  - cpu
+  plan: null
+  provider:
+    name: ""
+  scenarios: null
