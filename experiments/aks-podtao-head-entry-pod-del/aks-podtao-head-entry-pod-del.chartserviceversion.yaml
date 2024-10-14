@@ -1,0 +1,33 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChartServiceVersion
+metadata:
+  annotations:
+    categories: ""
+    chartDescription: ""
+    createdAt: ""
+    repository: ""
+    support: ""
+    vendor: ""
+  name: aks-podtao-head-entry-pod-del
+packageInfo:
+  experiments: null
+  packageName: ""
+spec:
+  categoryDescription: ""
+  displayName: aks-podtao-head-entry-pod-del
+  experiments: null
+  faults:
+  - chaosType: ""
+    description: ""
+    displayName: ""
+    name: pod-delete-4ma
+    plan: null
+    supportedVersion: null
+  keywords:
+  - podtatohead-entry
+  - aks
+  - pod-delete
+  plan: null
+  provider:
+    name: ""
+  scenarios: null
