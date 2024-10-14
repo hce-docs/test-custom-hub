@@ -1,0 +1,33 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChartServiceVersion
+metadata:
+  annotations:
+    categories: ""
+    chartDescription: ""
+    createdAt: ""
+    repository: ""
+    support: ""
+    vendor: ""
+  name: aks-podtaohead-hat-network-loss
+packageInfo:
+  experiments: null
+  packageName: ""
+spec:
+  categoryDescription: ""
+  displayName: aks-podtaohead-hat-network-loss
+  experiments: null
+  faults:
+  - chaosType: ""
+    description: ""
+    displayName: ""
+    name: pod-network-loss-xeq
+    plan: null
+    supportedVersion: null
+  keywords:
+  - aks
+  - podtatohead-hat
+  - network
+  plan: null
+  provider:
+    name: ""
+  scenarios: null
