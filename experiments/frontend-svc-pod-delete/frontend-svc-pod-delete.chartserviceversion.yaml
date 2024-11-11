@@ -1,0 +1,32 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChartServiceVersion
+metadata:
+  annotations:
+    categories: ""
+    chartDescription: ""
+    createdAt: ""
+    repository: ""
+    support: ""
+    vendor: ""
+  name: frontend-svc-pod-delete
+packageInfo:
+  experiments: null
+  packageName: ""
+spec:
+  categoryDescription: Delete the frontend service of the boutique application
+  displayName: frontend-svc-pod-delete
+  experiments: null
+  faults:
+  - chaosType: ""
+    description: ""
+    displayName: ""
+    name: pod-delete-nrk
+    plan: null
+    supportedVersion: null
+  keywords:
+  - kubernetes
+  - boutique
+  plan: null
+  provider:
+    name: ""
+  scenarios: null
