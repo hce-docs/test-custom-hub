@@ -1,0 +1,32 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChartServiceVersion
+metadata:
+  annotations:
+    categories: ""
+    chartDescription: ""
+    createdAt: ""
+    repository: ""
+    support: ""
+    vendor: ""
+  name: productcatalog-netwrk-loss
+packageInfo:
+  experiments: null
+  packageName: ""
+spec:
+  categoryDescription: Network loss on productcatalog service of boutique application
+  displayName: productcatalog-netwrk-loss
+  experiments: null
+  faults:
+  - chaosType: ""
+    description: ""
+    displayName: ""
+    name: pod-network-loss-zpw
+    plan: null
+    supportedVersion: null
+  keywords:
+  - kubernetes
+  - boutique
+  plan: null
+  provider:
+    name: ""
+  scenarios: null
