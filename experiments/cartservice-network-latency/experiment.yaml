@@ -1,7 +1,6 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
-  creationTimestamp: null
   name: cartservice-network-latency
   namespace: hce
 spec:
@@ -143,6 +142,4 @@ spec:
         weight: "10"
     name: pod-network-latency-wmd
     outputs: {}
-status:
-  finishedAt: null
-  startedAt: null
+
